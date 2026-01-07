@@ -287,41 +287,76 @@ class BitcoinSignalApp {
 
     // AIサイン生成・管理機能
     generateMasterSignals() {
-        // データ範囲内で論理的なサインを生成
+        // エントリー→クローズ型のサインを生成
         const now = new Date();
         const signals = [];
         
-        // 1000本の1時間足データ範囲を6つのセグメントに分割
+        // 1000本の1時間足データ範囲を4つのトレードセグメントに分割
         const dataStartTime = now.getTime() - (1000 * 60 * 60 * 1000); // 1000時間前
-        const segmentDuration = (1000 * 60 * 60 * 1000) / 6; // 6つのサインに分割
+        const tradeCount = 4; // 4回のトレード
+        const segmentDuration = (1000 * 60 * 60 * 1000) / tradeCount;
         
-        // 買いと売りを交互に配置
-        const signalTypes = ['buy', 'sell', 'buy', 'sell', 'buy', 'sell'];
+        // トレードパターン: [entry_type, close_type]
+        const tradePatterns = [
+            ['buy', 'profit'],     // BUY → 利確
+            ['sell', 'loss'],      // SELL → 損切り
+            ['buy', 'profit'],     // BUY → 利確
+            ['buy', 'loss']        // BUY → 損切り
+        ];
         
-        for (let i = 0; i < signalTypes.length; i++) {
-            // 各セグメント内でランダムな位置を選択（重複を避ける）
+        for (let i = 0; i < tradePatterns.length; i++) {
+            const [entryType, closeType] = tradePatterns[i];
             const segmentStart = dataStartTime + (i * segmentDuration);
-            const segmentEnd = segmentStart + segmentDuration;
-            const randomOffset = Math.random() * (segmentDuration * 0.8) + (segmentDuration * 0.1); // セグメントの中央80%の範囲
-            const timestamp = Math.floor((segmentStart + randomOffset) / 1000);
             
-            const signalType = signalTypes[i];
-            const basePrice = 45000 + (Math.random() - 0.5) * 6000;
+            // エントリーサイン（セグメントの前半）
+            const entryOffset = Math.random() * (segmentDuration * 0.3) + (segmentDuration * 0.1);
+            const entryTimestamp = Math.floor((segmentStart + entryOffset) / 1000);
+            const entryPrice = 45000 + (Math.random() - 0.5) * 6000;
             
             signals.push({
-                id: `signal_${i}_${timestamp}`,
-                timestamp: timestamp,
-                type: signalType,
-                price: Math.round(basePrice),
-                reason: this.generateSignalReason(signalType),
-                confidence: Math.round((Math.random() * 20 + 80)) // 80-100%の信頼度
+                id: `entry_${i}_${entryTimestamp}`,
+                timestamp: entryTimestamp,
+                type: entryType,
+                action: 'entry',
+                price: Math.round(entryPrice),
+                reason: this.generateSignalReason(entryType),
+                confidence: Math.round((Math.random() * 20 + 80)),
+                tradeId: i
+            });
+            
+            // クローズサイン（セグメントの後半）
+            const closeOffset = Math.random() * (segmentDuration * 0.3) + (segmentDuration * 0.6);
+            const closeTimestamp = Math.floor((segmentStart + closeOffset) / 1000);
+            
+            // 利確・損切りの価格計算
+            let closePrice;
+            if (closeType === 'profit') {
+                const profitRate = (Math.random() * 0.02 + 0.01); // 1-3%の利益
+                closePrice = entryType === 'buy' ? 
+                    entryPrice * (1 + profitRate) : 
+                    entryPrice * (1 - profitRate);
+            } else {
+                const lossRate = (Math.random() * 0.01 + 0.01); // 1-2%の損失
+                closePrice = entryType === 'buy' ? 
+                    entryPrice * (1 - lossRate) : 
+                    entryPrice * (1 + lossRate);
+            }
+            
+            signals.push({
+                id: `close_${i}_${closeTimestamp}`,
+                timestamp: closeTimestamp,
+                type: closeType,
+                action: 'close',
+                price: Math.round(closePrice),
+                entryPrice: Math.round(entryPrice),
+                tradeId: i
             });
         }
         
-        // タイムスタンプでソート（念のため）
+        // タイムスタンプでソート
         this.masterSignals = signals.sort((a, b) => a.timestamp - b.timestamp);
         console.log('Master signals generated:', this.masterSignals.length, 'signals');
-        console.log('Signal sequence:', this.masterSignals.map(s => s.type).join(' -> '));
+        console.log('Trade flow:', this.masterSignals.map(s => `${s.action}:${s.type}`).join(' -> '));
     }
 
     generateSignalReason(type) {
@@ -385,16 +420,51 @@ class BitcoinSignalApp {
             
             // チャートの表示範囲内かどうかをチェック
             if (adjustedTime >= dataStartTime && adjustedTime <= now) {
-                const isBuy = signal.type === 'buy';
+                let marker = {
+                    time: adjustedTime
+                };
                 
-                // グロー効果用の大きなマーカー（薄い色）
-                markers.push({
-                    time: adjustedTime,
-                    position: isBuy ? 'belowBar' : 'aboveBar',
-                    color: isBuy ? 'rgba(0, 255, 255, 0.3)' : 'rgba(255, 20, 147, 0.3)',
-                    shape: isBuy ? 'arrowUp' : 'arrowDown',
-                    size: 5
-                });
+                if (signal.action === 'entry') {
+                    // エントリーサイン（既存の矢印デザインを維持）
+                    const isBuy = signal.type === 'buy';
+                    marker = {
+                        ...marker,
+                        position: isBuy ? 'belowBar' : 'aboveBar',
+                        color: isBuy ? 'rgba(0, 255, 255, 0.3)' : 'rgba(255, 20, 147, 0.3)',
+                        shape: isBuy ? 'arrowUp' : 'arrowDown',
+                        size: 5
+                    };
+                } else if (signal.action === 'close') {
+                    // クローズサイン - エントリー方向に応じて適切な位置に配置
+                    // 対応するエントリーサインを見つける
+                    const entrySignal = this.masterSignals.find(s => 
+                        s.tradeId === signal.tradeId && s.action === 'entry'
+                    );
+                    
+                    if (signal.type === 'profit') {
+                        // 利確 - エントリー方向に応じて有利な位置
+                        const position = entrySignal && entrySignal.type === 'buy' ? 'aboveBar' : 'belowBar';
+                        marker = {
+                            ...marker,
+                            position: position,
+                            color: '#00FF00',
+                            shape: 'circle',
+                            size: 3
+                        };
+                    } else if (signal.type === 'loss') {
+                        // 損切り - エントリー方向に応じて不利な位置
+                        const position = entrySignal && entrySignal.type === 'buy' ? 'belowBar' : 'aboveBar';
+                        marker = {
+                            ...marker,
+                            position: position,
+                            color: '#FF0000',
+                            shape: 'circle',
+                            size: 3
+                        };
+                    }
+                }
+                
+                markers.push(marker);
             }
         }
         
