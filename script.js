@@ -99,8 +99,8 @@ class BitcoinSignalApp {
                     visible: false,
                 },
                 grid: {
-                    vertLines: { color: '#333338' },
-                    horzLines: { color: '#333338' },
+                    vertLines: { visible: false },
+                    horzLines: { visible: false },
                 },
                 crosshair: {
                     mode: LightweightCharts.CrosshairMode.Normal,
@@ -134,6 +134,10 @@ class BitcoinSignalApp {
                 borderDownColor: '#ea5394',
                 wickUpColor: '#0361ad',
                 wickDownColor: '#ea5394',
+                priceLineVisible: true,
+                lastValueVisible: true,
+                priceLineColor: '#ffffff',
+                priceLineWidth: 1,
             });
             
             console.log('Candlestick series added successfully');
