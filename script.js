@@ -287,21 +287,26 @@ class BitcoinSignalApp {
 
     // AIサイン生成・管理機能
     generateMasterSignals() {
-        // データ範囲内でサインを生成（1000本のデータ範囲内）
+        // データ範囲内で論理的なサインを生成
         const now = new Date();
         const signals = [];
         
-        // 1000本の1分足データ範囲内でサインを配置
-        const dataStartTime = now.getTime() - (1000 * 60 * 1000); // 1000分前
-        const signalCount = 8; // 固定で8個のサイン
+        // 1000本の1時間足データ範囲を6つのセグメントに分割
+        const dataStartTime = now.getTime() - (1000 * 60 * 60 * 1000); // 1000時間前
+        const segmentDuration = (1000 * 60 * 60 * 1000) / 6; // 6つのサインに分割
         
-        for (let i = 0; i < signalCount; i++) {
-            // データ範囲内でランダムな時刻を選択
-            const randomOffset = Math.random() * (1000 * 60 * 1000); // 0-1000分の範囲
-            const timestamp = Math.floor((dataStartTime + randomOffset) / 1000);
+        // 買いと売りを交互に配置
+        const signalTypes = ['buy', 'sell', 'buy', 'sell', 'buy', 'sell'];
+        
+        for (let i = 0; i < signalTypes.length; i++) {
+            // 各セグメント内でランダムな位置を選択（重複を避ける）
+            const segmentStart = dataStartTime + (i * segmentDuration);
+            const segmentEnd = segmentStart + segmentDuration;
+            const randomOffset = Math.random() * (segmentDuration * 0.8) + (segmentDuration * 0.1); // セグメントの中央80%の範囲
+            const timestamp = Math.floor((segmentStart + randomOffset) / 1000);
             
-            const signalType = Math.random() > 0.5 ? 'buy' : 'sell';
-            const basePrice = 45000 + (Math.random() - 0.5) * 8000;
+            const signalType = signalTypes[i];
+            const basePrice = 45000 + (Math.random() - 0.5) * 6000;
             
             signals.push({
                 id: `signal_${i}_${timestamp}`,
@@ -309,14 +314,14 @@ class BitcoinSignalApp {
                 type: signalType,
                 price: Math.round(basePrice),
                 reason: this.generateSignalReason(signalType),
-                confidence: Math.round((Math.random() * 25 + 75)) // 75-100%の信頼度
+                confidence: Math.round((Math.random() * 20 + 80)) // 80-100%の信頼度
             });
         }
         
-        // タイムスタンプでソート
+        // タイムスタンプでソート（念のため）
         this.masterSignals = signals.sort((a, b) => a.timestamp - b.timestamp);
         console.log('Master signals generated:', this.masterSignals.length, 'signals');
-        console.log('Signal timestamps:', this.masterSignals.map(s => new Date(s.timestamp * 1000).toLocaleString()));
+        console.log('Signal sequence:', this.masterSignals.map(s => s.type).join(' -> '));
     }
 
     generateSignalReason(type) {
