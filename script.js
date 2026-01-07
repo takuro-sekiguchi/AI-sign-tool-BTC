@@ -375,21 +375,30 @@ class BitcoinSignalApp {
         const intervalSeconds = intervals[timeframe];
         const markers = [];
         
+        // 現在の時刻から1000本のデータ範囲を計算
+        const now = Math.floor(Date.now() / 1000);
+        const dataStartTime = now - (1000 * intervalSeconds);
+        
         for (const signal of this.masterSignals) {
             // サインのタイムスタンプをこの時間足の開始時刻に調整
             const adjustedTime = Math.floor(signal.timestamp / intervalSeconds) * intervalSeconds;
-            const isBuy = signal.type === 'buy';
             
-            // グロー効果用の大きなマーカー（薄い色）
-            markers.push({
-                time: adjustedTime,
-                position: isBuy ? 'belowBar' : 'aboveBar',
-                color: isBuy ? 'rgba(0, 255, 255, 0.3)' : 'rgba(255, 20, 147, 0.3)',
-                shape: isBuy ? 'arrowUp' : 'arrowDown',
-                size: 5
-            });
+            // チャートの表示範囲内かどうかをチェック
+            if (adjustedTime >= dataStartTime && adjustedTime <= now) {
+                const isBuy = signal.type === 'buy';
+                
+                // グロー効果用の大きなマーカー（薄い色）
+                markers.push({
+                    time: adjustedTime,
+                    position: isBuy ? 'belowBar' : 'aboveBar',
+                    color: isBuy ? 'rgba(0, 255, 255, 0.3)' : 'rgba(255, 20, 147, 0.3)',
+                    shape: isBuy ? 'arrowUp' : 'arrowDown',
+                    size: 5
+                });
+            }
         }
         
+        console.log(`Signals in visible range for ${timeframe}:`, markers.length, 'out of', this.masterSignals.length);
         return markers;
     }
 
