@@ -93,6 +93,10 @@ class BitcoinSignalApp {
                 layout: {
                     background: { color: '#0a0a0a' },
                     textColor: '#ffffff',
+                    fontSize: 12,
+                },
+                leftPriceScale: {
+                    visible: false,
                 },
                 grid: {
                     vertLines: { color: '#333338' },
@@ -103,11 +107,17 @@ class BitcoinSignalApp {
                 },
                 rightPriceScale: {
                     borderColor: '#333338',
+                    scaleMargins: {
+                        top: 0.1,
+                        bottom: 0.1,
+                    },
                 },
                 timeScale: {
                     borderColor: '#333338',
                     timeVisible: true,
                     secondsVisible: false,
+                    fixLeftEdge: false,
+                    fixRightEdge: false,
                 },
                 handleScroll: {
                     vertTouchDrag: true,
