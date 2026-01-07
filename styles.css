@@ -1,0 +1,418 @@
+/* CSS Variables for Dark Theme */
+:root {
+  /* Colors */
+  --bg-primary: #0a0a0a;
+  --bg-secondary: #151517;
+  --bg-tertiary: #1e1e21;
+  --text-primary: #ffffff;
+  --text-secondary: #cccccc;
+  --text-muted: #999999;
+  --accent-blue: rgb(3, 97, 173);
+  --accent-pink: #ea5394;
+  --border-color: #333338;
+  --hover-color: #252529;
+  
+  /* AI Gradients */
+  --gradient-primary: linear-gradient(135deg, rgb(3, 97, 173) 0%, #ea5394 100%);
+  --gradient-secondary: linear-gradient(90deg, rgba(3, 97, 173, 0.1) 0%, rgba(234, 83, 148, 0.1) 100%);
+  --gradient-hover: linear-gradient(135deg, rgba(3, 97, 173, 0.8) 0%, rgba(234, 83, 148, 0.8) 100%);
+  --gradient-glow: linear-gradient(45deg, rgba(3, 97, 173, 0.3), rgba(234, 83, 148, 0.3));
+  
+  /* Glow Effects */
+  --glow-blue: 0 0 20px rgba(3, 97, 173, 0.5);
+  --glow-pink: 0 0 20px rgba(234, 83, 148, 0.5);
+  --glow-mixed: 0 0 30px rgba(3, 97, 173, 0.3), 0 0 60px rgba(234, 83, 148, 0.2);
+  
+  /* Layout */
+  --header-height: 70px;
+  --sidebar-width: 250px;
+  --footer-height: 80px;
+  
+  /* Typography */
+  --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* Reset and Base Styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-family);
+  background: var(--bg-primary);
+  background-image: 
+    radial-gradient(circle at 25% 25%, rgba(3, 97, 173, 0.05) 0%, transparent 50%),
+    radial-gradient(circle at 75% 75%, rgba(234, 83, 148, 0.05) 0%, transparent 50%);
+  color: var(--text-primary);
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+/* App Container */
+.app-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* Header Styles */
+.header {
+  background: linear-gradient(90deg, var(--bg-secondary) 0%, rgba(3, 97, 173, 0.05) 50%, var(--bg-secondary) 100%);
+  border-bottom: 1px solid var(--border-color);
+  box-shadow: 0 2px 20px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 3;
+  height: var(--header-height);
+}
+
+.header-left .logo {
+  font-size: 1.5rem;
+  font-weight: bold;
+  background: var(--gradient-primary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-shadow: var(--glow-mixed);
+  position: relative;
+}
+
+.header-left .logo::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--gradient-glow);
+  filter: blur(10px);
+  opacity: 0.7;
+  z-index: -1;
+}
+
+.language-selector {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 0.9rem;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease;
+}
+
+.language-selector:hover {
+  background: var(--gradient-hover);
+  border-color: var(--accent-blue);
+  box-shadow: var(--glow-blue), inset 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+/* Main Layout */
+.main-layout {
+  display: grid;
+  grid-template-columns: var(--sidebar-width) 1fr;
+  flex: 1;
+  min-height: 0;
+  margin-top: var(--header-height);
+}
+
+/* Sidebar Styles */
+.sidebar {
+  background: linear-gradient(180deg, var(--bg-secondary) 0%, rgba(3, 97, 173, 0.03) 30%, rgba(234, 83, 148, 0.03) 70%, var(--bg-secondary) 100%);
+  border-right: 1px solid var(--border-color);
+  box-shadow: inset -1px 0 20px rgba(0, 0, 0, 0.3);
+  padding: 20px;
+  overflow-y: auto;
+  position: relative;
+  z-index: 2;
+}
+
+.sidebar::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 1px;
+  height: 100%;
+  background: var(--gradient-primary);
+  opacity: 0.5;
+}
+
+.sidebar-section {
+  margin-bottom: 30px;
+}
+
+.sidebar-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  background: var(--gradient-primary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 15px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid;
+  border-image: var(--gradient-primary) 1;
+  text-shadow: var(--glow-blue);
+}
+
+/* Main Content Area */
+.main-content {
+  display: flex;
+  flex-direction: column;
+  background: radial-gradient(ellipse at center, rgba(3, 97, 173, 0.02) 0%, var(--bg-primary) 70%);
+  position: relative;
+  overflow-y: auto;
+  padding: 20px;
+  gap: 20px;
+}
+
+.main-content::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    radial-gradient(circle at 20% 20%, rgba(3, 97, 173, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 80% 80%, rgba(234, 83, 148, 0.1) 0%, transparent 50%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Chart Section */
+.chart-section {
+  flex: 2;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  z-index: 2;
+  min-height: 400px;
+}
+
+.chart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  padding: 0 10px;
+}
+
+.chart-title {
+  font-size: 1.4rem;
+  font-weight: 600;
+  background: var(--gradient-primary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin: 0;
+}
+
+.chart-container {
+  flex: 1;
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+#tradingview-chart {
+  width: 100%;
+  height: 100%;
+  min-height: 400px;
+  padding: 20px 10px;
+  box-sizing: border-box;
+}
+
+.chart-controls {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.timeframe-buttons {
+  display: flex;
+  gap: 4px;
+  background-color: var(--bg-tertiary);
+  padding: 4px;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+}
+
+.timeframe-btn {
+  background: transparent;
+  color: var(--text-secondary);
+  border: none;
+  padding: 8px 12px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: var(--font-family);
+}
+
+.timeframe-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-primary);
+}
+
+.timeframe-btn.active {
+  background: var(--gradient-primary);
+  color: white;
+  box-shadow: var(--glow-blue);
+  transform: translateY(-1px);
+}
+
+.timeframe-btn.loading {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+/* Analysis Section */
+.analysis-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  z-index: 2;
+  min-height: 200px;
+}
+
+.analysis-header {
+  margin-bottom: 15px;
+  padding: 0 10px;
+}
+
+.analysis-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  background: var(--gradient-primary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin: 0;
+}
+
+.analysis-content {
+  flex: 1;
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.analysis-placeholder {
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+.analysis-placeholder p {
+  margin-bottom: 12px;
+}
+
+/* Footer Styles */
+.footer {
+  background-color: var(--bg-secondary);
+  border-top: 1px solid var(--border-color);
+  padding: 15px 20px;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.footer-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.disclaimer {
+  font-weight: 500;
+  color: var(--accent-pink);
+}
+
+.copyright {
+  color: var(--text-muted);
+}
+
+/* Notification Container */
+#notification-container {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  :root {
+    --sidebar-width: 0px;
+  }
+  
+  .main-layout {
+    grid-template-columns: 1fr;
+  }
+  
+  .sidebar {
+    display: none;
+  }
+  
+  .header {
+    padding: 0 15px;
+  }
+  
+  .main-content {
+    padding: 10px;
+    gap: 15px;
+  }
+  
+  .chart-section {
+    min-height: 300px;
+  }
+  
+  #tradingview-chart {
+    min-height: 300px;
+  }
+  
+  .analysis-section {
+    min-height: 150px;
+  }
+  
+  .footer-content {
+    flex-direction: column;
+    text-align: center;
+  }
+}
+
+/* Loading States */
+.loading {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+/* Utility Classes */
+.text-blue { color: var(--accent-blue); }
+.text-pink { color: var(--accent-pink); }
+.text-muted { color: var(--text-muted); }
+
+/* Chart Signal Enhancement */
+#tradingview-chart canvas {
+  filter: drop-shadow(0 0 3px rgba(3, 97, 173, 0.3)) drop-shadow(0 0 6px rgba(234, 83, 148, 0.3));
+}

@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bitcoin AI Signal Tool</title>
+    
+    <!-- External Dependencies -->
+    <script src="https://unpkg.com/lightweight-charts@4.1.3/dist/lightweight-charts.standalone.production.js"></script>
+    
+    <!-- Local Stylesheets -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-left">
+                <h1 class="logo">BTC AI Signal</h1>
+            </div>
+            <div class="header-right">
+                <select class="language-selector">
+                    <option value="ja">JP</option>
+                    <option value="en">EN</option>
+                </select>
+            </div>
+        </header>
+
+        <!-- Main Layout -->
+        <div class="main-layout">
+            <!-- Sidebar -->
+            <aside class="sidebar">
+                <div class="sidebar-section">
+                    <h3 class="sidebar-title">AIサイン履歴</h3>
+                    <div class="signal-history">
+                        <!-- Signal history will be populated here -->
+                    </div>
+                </div>
+                
+                <div class="sidebar-section">
+                    <h3 class="sidebar-title">パフォーマンス</h3>
+                    <div class="performance-stats">
+                        <!-- Performance stats will be populated here -->
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Main Content Area -->
+            <main class="main-content">
+                <!-- Chart Section -->
+                <section class="chart-section">
+                    <div class="chart-header">
+                        <h2 class="chart-title">BTC/USD チャート</h2>
+                        <div class="chart-controls">
+                            <div class="timeframe-buttons">
+                                <button class="timeframe-btn active" data-timeframe="1m">1M</button>
+                                <button class="timeframe-btn" data-timeframe="5m">5M</button>
+                                <button class="timeframe-btn" data-timeframe="15m">15M</button>
+                                <button class="timeframe-btn" data-timeframe="1h">1H</button>
+                                <button class="timeframe-btn" data-timeframe="4h">4H</button>
+                                <button class="timeframe-btn" data-timeframe="1d">1D</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <div id="tradingview-chart"></div>
+                    </div>
+                </section>
+                
+                <!-- Analysis Section -->
+                <section class="analysis-section">
+                    <div class="analysis-header">
+                        <h3 class="analysis-title">AI分析・解説</h3>
+                    </div>
+                    <div class="analysis-content">
+                        <div class="analysis-placeholder">
+                            <p>ここにAI分析結果や市場解説が表示されます。</p>
+                            <p>チャート上のサインの詳細説明なども表示予定です。</p>
+                        </div>
+                    </div>
+                </section>
+            </main>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="footer-content">
+                <p class="disclaimer">
+                    本ツールはデモ用途です。投資助言ではありません。実際の投資判断には使用しないでください。
+                </p>
+                <p class="copyright">
+                    © 2024 BTC AI Signal Tool | Powered by TradingView
+                </p>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Notification Container -->
+    <div id="notification-container"></div>
+
+    <!-- Local Scripts -->
+    <script src="script.js"></script>
+</body>
+</html>
