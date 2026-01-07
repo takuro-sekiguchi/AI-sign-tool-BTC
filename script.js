@@ -178,8 +178,6 @@ class BitcoinSignalApp {
         
         console.log(`Sample data added for ${this.currentTimeframe}:`, data.length, 'data points');
         
-        // すぐにテスト用サインを追加
-        this.addTestSignals();
     }
     
     addTestSignals() {
@@ -189,29 +187,27 @@ class BitcoinSignalApp {
         const data = this.dataCache.get(this.currentTimeframe);
         if (!data || data.length < 10) return;
         
-        const testMarkers = [
-            {
-                time: data[Math.floor(data.length * 0.2)].time,
-                position: 'belowBar',
-                color: '#00D4FF',
-                shape: 'arrowUp',
-                size: 2
-            },
-            {
-                time: data[Math.floor(data.length * 0.5)].time,
-                position: 'aboveBar', 
-                color: '#FF4081',
-                shape: 'arrowDown',
-                size: 2
-            },
-            {
-                time: data[Math.floor(data.length * 0.8)].time,
-                position: 'belowBar',
-                color: '#00D4FF',
-                shape: 'arrowUp',
-                size: 2
-            }
+        // 複数マーカーを重ね合わせて発光効果を作成
+        const testMarkers = [];
+        const positions = [
+            { ratio: 0.2, type: 'buy' },
+            { ratio: 0.5, type: 'sell' }, 
+            { ratio: 0.8, type: 'buy' }
         ];
+        
+        positions.forEach(pos => {
+            const time = data[Math.floor(data.length * pos.ratio)].time;
+            const isBuy = pos.type === 'buy';
+            
+            // グロー効果用の大きなマーカー（薄い色）
+            testMarkers.push({
+                time: time,
+                position: isBuy ? 'belowBar' : 'aboveBar',
+                color: isBuy ? 'rgba(0, 255, 255, 0.3)' : 'rgba(255, 20, 147, 0.3)',
+                shape: isBuy ? 'arrowUp' : 'arrowDown',
+                size: 5
+            });
+        });
         
         this.candlestickSeries.setMarkers(testMarkers);
         console.log('Test signals added:', testMarkers.length, 'markers');
@@ -363,16 +359,16 @@ class BitcoinSignalApp {
         for (const signal of this.masterSignals) {
             // サインのタイムスタンプをこの時間足の開始時刻に調整
             const adjustedTime = Math.floor(signal.timestamp / intervalSeconds) * intervalSeconds;
+            const isBuy = signal.type === 'buy';
             
-            const marker = {
+            // グロー効果用の大きなマーカー（薄い色）
+            markers.push({
                 time: adjustedTime,
-                position: signal.type === 'buy' ? 'belowBar' : 'aboveBar',
-                color: signal.type === 'buy' ? '#00D4FF' : '#FF4081',
-                shape: signal.type === 'buy' ? 'arrowUp' : 'arrowDown',
-                size: 2
-            };
-            
-            markers.push(marker);
+                position: isBuy ? 'belowBar' : 'aboveBar',
+                color: isBuy ? 'rgba(0, 255, 255, 0.3)' : 'rgba(255, 20, 147, 0.3)',
+                shape: isBuy ? 'arrowUp' : 'arrowDown',
+                size: 5
+            });
         }
         
         return markers;

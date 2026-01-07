@@ -414,5 +414,9 @@ body {
 
 /* Chart Signal Enhancement */
 #tradingview-chart canvas {
-  filter: drop-shadow(0 0 3px rgba(3, 97, 173, 0.3)) drop-shadow(0 0 6px rgba(234, 83, 148, 0.3));
+  filter: 
+    drop-shadow(0 0 5px rgba(0, 255, 255, 0.8)) 
+    drop-shadow(0 0 10px rgba(255, 20, 147, 0.8))
+    drop-shadow(0 0 15px rgba(0, 255, 255, 0.4))
+    drop-shadow(0 0 20px rgba(255, 20, 147, 0.4));
 }
